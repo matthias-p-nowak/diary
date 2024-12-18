@@ -2,18 +2,18 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch currently open script with Xdebug 2 (Legacy)",
+            "name": "Launch dbUpgrade script",
             "type": "php",
             "request": "launch",
-            "program": "${file}",
+            "program": "${workspaceRoot}/private/dbUpgrade.php",
             "cwd": "${fileDirname}",
             "port": 0,
             "runtimeArgs": [
-                "-dxdebug.remote_enable=yes",
-                "-dxdebug.remote_autostart=yes"
+                "-dxdebug.start_with_request=yes"
             ],
             "env": {
-                "XDEBUG_CONFIG": "remote_port=${port}"
+                "XDEBUG_MODE": "debug,develop",
+                "XDEBUG_CONFIG": "client_port=${port}"
             }
         },
         {

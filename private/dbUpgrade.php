@@ -1,5 +1,4 @@
 <?php
-
 error_log(__FILE__ . ':' . __LINE__);
 $config = join(DIRECTORY_SEPARATOR, [__DIR__, 'main.ini']);
 if (file_exists($config)) {
