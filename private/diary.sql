@@ -2,6 +2,6 @@
 
 create table if not exists `${prefix}Password` (
     `Hash` varchar(64),
-    `Created` timestamp not null default current_timestamp,
+    `Created` timestamp not null default current_timestamp primary key,
     `Used` timestamp
 );
