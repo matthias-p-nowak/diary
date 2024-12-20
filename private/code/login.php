@@ -25,8 +25,7 @@ class Login
             $dbctx = Db\DbCtx::getCtx();
             $pwdsIt = $dbctx->findRows('Password');
             $pwds = iterator_to_array($pwdsIt);
-            $utc=new \DateTimeZone('utc');
-            $now=new \DateTime('now',$utc);
+            $now=new \DateTime('now');
             if (empty($pw)) {
                 // sending a password
                 // todo find out last email
@@ -36,7 +35,6 @@ class Login
                     $lt = $pwd->Created;
                    }
                 }
-                // $ltt=new \DateTime($lt,$utc);
                 $ltt=new \DateTime($lt);
                 $diff=$now->diff($ltt);
                 $diffS=(($diff->days*24+$diff->h)*60+$diff->i)*60+$diff->s; 
@@ -52,7 +50,6 @@ class Login
                 if(password_verify($pw,$pwd->Hash)){
                     $pwd->Used= $now->format('Y-m-d H:i:s');
                     $dbctx->storeRow($pwd);
-                    $_SESSION['authenticated']=true;
                     return true;
                 }
             }

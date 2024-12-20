@@ -27,6 +27,11 @@ spl_autoload_register();
 
 session_start();
 
+function ShowHome(){
+    $p=new Code\Page();
+    $p->showHome();
+}
+
 $res = $_SERVER['PATH_INFO'] ?? '/home';
 try {
     if (!isset($_SESSION['authenticated'])) {
@@ -34,9 +39,13 @@ try {
         if (!$login->login()) {
             return;
         }
-
+        $_SESSION['authenticated'] = true;
+        error_log(__FILE__ . ':' . __LINE__ . ' ' . __FUNCTION__ . ' login was successful');
     }
-
+    $status = ($_SESSION['status'] ??= new stdClass());
+    match ($res) {
+        default => ShowHome(),
+    };
 } catch (Exception $ex) {
     error_log("got exception $ex");
 } finally {

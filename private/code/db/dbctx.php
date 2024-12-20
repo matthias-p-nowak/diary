@@ -54,6 +54,7 @@ class DbCtx
         $tz= $config->timezone ?? 'utc';
         $this->pdo = new \PDO('mysql:host=' . $dbCfg->server . ';dbname=' . $dbCfg->database . ';timezone='.$tz,
             $dbCfg->user, $dbCfg->password);
+        $this->pdo->exec('SET time_zone = \'' . $tz .'\' ');
         self::$instance = $this;
         $this->prefix = $dbCfg->prefix . '_' ?? '';
         error_log(__FILE__ . ':' . __LINE__ . ' ' . __FUNCTION__ . ' db-pdo constructed');
