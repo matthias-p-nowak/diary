@@ -15,6 +15,7 @@ class Page{
             $scriptContent .= \file_get_contents($scriptFile);
         }
         echo <<< EOM
+        <!DOCTYPE html>
         <html><head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta charset="utf-8">
@@ -35,22 +36,41 @@ class Page{
     private function showTopBox()
     {
         global $status;
-        $newStyle='';
+        $scriptURL = $_SERVER['SCRIPT_NAME'];
+        $sameStyle='';
         $editStyle='';
         $resultStyle='';
+        $configStyle='';
         match($status->mode){
             'edit' => $editStyle='style="background-color: yellow;"',
             'result' => $resultStyle='style="background-color: aqua;"',
-            default => $newStyle='style="background-color: lightgreen;"',
+            'config' => $configStyle='style="background-color: bisque"',
+            default => $sameStyle='style="background-color: lightgreen;"',
         };
         echo <<< EOM
-        <div class="topbox">
-        <span $newStyle>New</span>
-        <span $editStyle>Edit</span>
-        <span $resultStyle>Results</span>
-        <span>Configure</span>
+        <div id="topbox" x-action="replace" >
+        <form action="$scriptURL/change_mode" onsubmit="return false;" onclick="hxl_submit_form(event);">
+        <span name="same" $sameStyle >Same</span>
+        <span name="edit" $editStyle >Edit</span>
+        <span name="result" $resultStyle >Results</span>
+        <span name="config" $configStyle >Configure</span>
+        </form>
         </div>
         EOM;
+    }
+
+    public function changeMode()
+    {
+        global $status;
+        if(isset($_POST['name'])){
+            $status->mode = $_POST['name'];
+            $this->showTopBox();
+        }else{
+            http_response_code(400);
+            echo <<< EOM
+            something wrong with the request
+            EOM;
+        }
     }
 
 }

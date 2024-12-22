@@ -27,12 +27,6 @@ spl_autoload_register();
 
 session_start();
 
-function ShowHome(){
-    $p=new Code\Page();
-    $p->showHome();
-}
-
-$res = $_SERVER['PATH_INFO'] ?? '/home';
 try {
     if (!isset($_SESSION['authenticated'])) {
         $login = new Code\Login();
@@ -43,8 +37,13 @@ try {
         error_log(__FILE__ . ':' . __LINE__ . ' ' . __FUNCTION__ . ' login was successful');
     }
     $status = ($_SESSION['status'] ??= new stdClass());
+    $page=new Code\Page();
+    
+    $res = $_SERVER['PATH_INFO'] ?? '/home';
     match ($res) {
-        default => ShowHome(),
+        '/home' => $page->showHome(),
+        '/change_mode' => $page->changeMode(),
+        default => error_log(__FILE__.':'.__LINE__. ' '. __FUNCTION__.' executing default action'),
     };
 } catch (Exception $ex) {
     error_log("got exception $ex");

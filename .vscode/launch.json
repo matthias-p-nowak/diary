@@ -24,13 +24,13 @@
                 "-dxdebug.mode=debug",
                 "-dxdebug.start_with_request=yes",
                 "-S",
-                "localhost:0"
+                "0.0.0.0:3333"
             ],
             "program": "",
             "cwd": "${workspaceRoot}",
             "port": 9003,
             "serverReadyAction": {
-                "pattern": "Development Server \\(http://localhost:([0-9]+)\\) started",
+                "pattern": "Development Server \\(http://0.0.0.0:([0-9]+)\\) started",
                 "uriFormat": "http://localhost:%s/public/diary.php",
                 "action": "openExternally"
             }
