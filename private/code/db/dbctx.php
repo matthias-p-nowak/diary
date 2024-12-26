@@ -51,13 +51,13 @@ class DbCtx
     {
         global $config;
         $dbCfg = $config->database;
-        $tz= $config->timezone ?? 'utc';
-        $this->pdo = new \PDO('mysql:host=' . $dbCfg->server . ';dbname=' . $dbCfg->database . ';timezone='.$tz,
+        $tz = $config->timezone ?? 'utc';
+        $this->pdo = new \PDO('mysql:host=' . $dbCfg->server . ';dbname=' . $dbCfg->database . ';timezone=' . $tz,
             $dbCfg->user, $dbCfg->password);
-        $this->pdo->exec('SET time_zone = \'' . $tz .'\' ');
+        $this->pdo->exec('SET time_zone = \'' . $tz . '\' ');
         self::$instance = $this;
         $this->prefix = $dbCfg->prefix . '_' ?? '';
-        error_log(__FILE__ . ':' . __LINE__ . ' ' . __FUNCTION__ . ' db-pdo constructed');
+        // error_log(__FILE__ . ':' . __LINE__ . ' ' . __FUNCTION__ . ' db-pdo constructed');
     }
 
     /**
@@ -68,6 +68,7 @@ class DbCtx
     {
         return self::$instance ?? new self();
     }
+
     /**
      * @return void
      */
@@ -110,12 +111,28 @@ class DbCtx
      * @param string $tableName the table to get the rows from
      * @return Generator<mixed> of Objects with a classname equal to that tableName
      */
-    public function findRows(string $tableName, array $criteria = []): Generator
+    public function findRows(string $tableName, array $criteria = [], string $suffix = ''): Generator
     {
-        $stmt = $this->fetchStmt($tableName, $criteria);
+        $stmt = $this->fetchStmt($tableName, $criteria, $suffix);
         while ($res = $stmt->fetchObject(__NAMESPACE__ . '\\' . $tableName)) {
             $res->ctx = $this;
             yield $res;
+        }
+    }
+
+    /**
+     * 
+     * @return Generator
+     */
+    public function sqlAndRows(string $sql,string $tableName = ''): Generator
+    {
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute();
+        if(!empty($tableName)){
+            while ($res = $stmt->fetchObject(__NAMESPACE__ . '\\' . $tableName)) {
+                $res->ctx = $this;
+                yield $res;
+            }
         }
     }
 
@@ -124,7 +141,7 @@ class DbCtx
      * @return PDOStatement|bool
      * @param array<int,mixed> $criteria
      */
-    private function fetchStmt(string $tableName, array $criteria): PDOStatement | bool
+    private function fetchStmt(string $tableName, array $criteria, string $suffix): PDOStatement | bool
     {
         $sql = 'select * from `' . $this->prefix . $tableName . '`';
         if (count($criteria) > 0) {
@@ -132,6 +149,7 @@ class DbCtx
             $clause = makeClause($keys);
             $sql .= ' where ' . implode(' and ', $clause);
         }
+        $sql .= $suffix;
         error_log(__FILE__ . ':' . __LINE__ . ' ' . __FUNCTION__ . ' ' . $sql);
         $stmt = $this->pdo->prepare($sql);
         foreach ($criteria as $key => $value) {
@@ -144,6 +162,7 @@ class DbCtx
         $stmt->execute();
         return $stmt;
     }
+
     /**
      * @return void
      * @param mixed $row
@@ -176,10 +195,10 @@ class DbCtx
 
     /**
      * For storing, we need to know what can be stored in the database
-     * 
-     * @return <missing>|array<<missing>,object>
+     *
+     * @return array
      */
-    public function getRowDetails(string $tableName)
+    public function getRowDetails(string $tableName): array
     {
         if (isset($this->allRowDetails[$tableName])) {
             return $this->allRowDetails[$tableName];

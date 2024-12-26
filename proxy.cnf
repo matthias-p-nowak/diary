@@ -1,0 +1,8 @@
+foreground = yes
+
+[https]
+client = no
+accept = 4444
+connect= localhost:3333
+cert = ../ca-authority/web.crt
+key = ../ca-authority/web.key

@@ -37,13 +37,13 @@ try {
         error_log(__FILE__ . ':' . __LINE__ . ' ' . __FUNCTION__ . ' login was successful');
     }
     $status = ($_SESSION['status'] ??= new stdClass());
-    $page=new Code\Page();
     
     $res = $_SERVER['PATH_INFO'] ?? '/home';
     match ($res) {
-        '/home' => $page->showHome(),
-        '/change_mode' => $page->changeMode(),
-        default => error_log(__FILE__.':'.__LINE__. ' '. __FUNCTION__.' executing default action'),
+        '/home' => Code\Page::Show_Home(),
+        '/change_mode' => Code\Page::Change_Mode(),
+        '/event' => Code\Event::HandleEvent(),
+        default => error_log(__FILE__.':'.__LINE__. ' '. __FUNCTION__.' executing default action for '.$res ),
     };
 } catch (Exception $ex) {
     error_log("got exception $ex");

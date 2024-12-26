@@ -1,25 +1,59 @@
+html {
+  font-size: 4mm;
+}
+html h5 {
+  font-size: 1.1rem;
+}
+html h4 {
+  font-size: 1.2rem;
+}
+html h3 {
+  font-size: 1.3rem;
+}
+html h2 {
+  font-size: 1.4rem;
+}
+html h1 {
+  font-size: 1.5rem;
+}
+
 body {
-  background-color: antiquewhite;
+  background-color: #f0f0f0;
 }
 
 div#topbox {
   position: sticky;
   top: 3px;
-  margin: 1rem;
-  padding: 0.5rem;
+  margin: 0.2rem;
+  padding: 0.2rem;
   display: flex;
   justify-content: space-between;
 }
 div#topbox span {
   border: thin solid lightgreen;
   background-color: white;
-  margin: 0.5rem;
-  padding: 0.5rem;
-  border-radius: 0.5rem;
+  margin: 0.2rem;
+  padding: 0.3rem;
+  border-radius: 0.3rem;
   cursor: pointer;
 }
 div#topbox span:hover {
   box-shadow: 0 0 0.2rem 0.1rem #a0a0a0;
+}
+
+div.boxed {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+div.boxed div {
+  border: thin solid red;
+  border-radius: 0.5rem;
+  margin: 0.2rem;
+  padding: 0.5rem;
+  min-width: 10rem;
+  min-height: 3rem;
+  background-color: blanchedalmond;
 }
 
 .requested {
@@ -28,6 +62,35 @@ div#topbox span:hover {
 
 .failed {
   box-shadow: 0 0 1rem 0.5rem lightcoral;
+}
+
+div.table {
+  border: thin solid #d0d0d0;
+  border-radius: 0.5rem;
+  display: table;
+  margin: 1rem;
+  padding: 0.5rem;
+}
+div.table .right {
+  text-align: right;
+}
+div.table div.row {
+  border: thin solid green;
+  border-radius: 1rem;
+  display: table-row;
+  margin: 0.7rem;
+  padding: 0.3rem;
+}
+div.table div.row span {
+  margin: 0.5rem;
+  padding: 0.2rem;
+  display: table-cell;
+  border: thin solid red;
+  border-radius: 0.3rem;
+}
+div.table div.row span.wide {
+  background-color: #e0e0e0;
+  min-width: 30rem;
 }
 
 /*# sourceMappingURL=main.css.map */
