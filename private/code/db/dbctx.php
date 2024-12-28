@@ -123,10 +123,20 @@ class DbCtx
     /**
      * 
      * @return Generator
+     * @param array<int,mixed> $criteria
+     * @param string $sql 
+     * @param string $tableName - the class of returned objects
      */
-    public function sqlAndRows(string $sql,string $tableName = ''): Generator
+    public function sqlAndRows(string $sql,string $tableName,array $criteria=[]): Generator
     {
+        $sql = str_replace('${prefix}', $this->prefix, $sql);
         $stmt = $this->pdo->prepare($sql);
+        foreach ($criteria as $key => $value) {
+            if ($stmt->bindValue(':' . $key, $value)) {
+            } else {
+                error_log(__FILE__ . ':' . __LINE__ . ' binding parameter ' . $key . ' failed');
+            };
+        }
         $stmt->execute();
         if(!empty($tableName)){
             while ($res = $stmt->fetchObject(__NAMESPACE__ . '\\' . $tableName)) {
@@ -154,7 +164,6 @@ class DbCtx
         $stmt = $this->pdo->prepare($sql);
         foreach ($criteria as $key => $value) {
             if ($stmt->bindValue(':' . $key, $value)) {
-
             } else {
                 error_log(__FILE__ . ':' . __LINE__ . ' binding parameter ' . $key . ' failed');
             };
@@ -215,5 +224,33 @@ class DbCtx
         }
         $this->allRowDetails[$tableName] = $rowDetails;
         return $rowDetails;
+    }
+
+    /**
+     * deletes the rows that match the details
+     * @return void
+     * @param mixed $row
+     */
+    public function deleteRow($row): void
+    {
+        $tableName = basename(str_replace('\\', '/', get_class($row)));
+        $rowDetails = $this->getRowDetails($tableName);
+        $columns2store = array_keys($rowDetails);
+        foreach ($columns2store as $pos => $propName) {
+            if (!property_exists($row, $propName)) {
+                unset($columns2store[$pos]);
+            } else if (\is_null($row->$propName)) {
+                unset($columns2store[$pos]);
+            }
+        }
+        // constructing the SQL
+        $sql = 'DELETE FROM `' . $this->prefix . $tableName . '` where ' . implode(' and ', makeClause($columns2store));
+        $stmt = $this->pdo->prepare($sql);
+        foreach ($columns2store as $col) {
+            $stmt->bindValue(':' . $col, $row->$col);
+        }
+        if (!$stmt->execute()) {
+            error_log(__FILE__ . ':' . __LINE__ . ' deleting row failed ' . $sql . ' row=' . print_r($row, true));
+        }
     }
 }

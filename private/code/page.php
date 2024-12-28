@@ -10,6 +10,7 @@ class Page
      */
     public function showHome(): void
     {
+        global $status;
         $cssFile = \join(DIRECTORY_SEPARATOR, [__DIR__, 'assets', 'main.css']);
         $cssContent = \file_get_contents($cssFile);
         $scripts = ['htmx-lite.js', 'diary.js'];
@@ -32,7 +33,7 @@ class Page
         <h1>Diary</h1>
         EOM;
         $this->showTopBox();
-        $this->showEvents();
+        $this->showMain();
         echo <<< EOM
         </body>
         </html>
@@ -56,8 +57,10 @@ class Page
             'config' => $configStyle = 'style="background-color: bisque"',
             default => $sameStyle = 'style="background-color: lightgreen;"',
         };
+        $lt='<!-- '.__FILE__.':'.__LINE__.' '.' -->';
         echo <<< EOM
         <div id="topbox" x-action="replace" >
+        $lt
         <form action="$scriptURL/change_mode" onsubmit="return false;" onclick="hxl_submit_form(event);">
         <span name="same" $sameStyle >Same</span>
         <span name="edit" $editStyle >Edit</span>
@@ -71,17 +74,19 @@ class Page
     /**
      * @return void
      */
-    private function showEvents(): void
+    private function events2Register(): void
     {
         $scriptURL = $_SERVER['SCRIPT_NAME'];
+        $lt='<!-- '.__FILE__.':'.__LINE__.' '.' -->';
         echo <<< EOM
         <div id="main" x-action="replace">
+        $lt
         <h2>Past events</h2>
-        <div class="boxed">
-        <form action="$scriptURL/event" onsubmit="return false;" onclick="register_event(event);">
-        <div id="-1">New event</div>
+        <form action="$scriptURL/same_event" onsubmit="return false;" onclick="register_event(event);">
+        EOM;
+        $this->showAllActivities();
+        echo <<< EOM
         </form>
-        </div>
         </div>
         EOM;
     }
@@ -105,6 +110,7 @@ class Page
             $status->mode = $_POST['name'];
             $p = new Page();
             $p->showTopBox();
+            $p->showMain();
         } else {
             http_response_code(400);
             echo <<< EOM
@@ -119,27 +125,189 @@ class Page
     public function editEvent(mixed $ev): void
     {
         $scriptURL = $_SERVER['SCRIPT_NAME'];
+        $lt='<!-- '.__FILE__.':'.__LINE__.' '.' -->';
         echo <<< EOM
         <div id="main" x-action="replace">
+        $lt
         <h2>Editing</h2>
         <div class="table">
-        <form action="$scriptURL/edit_activity" onsubmit="return false;" >
-        <input type="hidden" value="{$ev->Id}">
+        <form action="$scriptURL/edit_event" onsubmit="return false;" >
+        <input type="hidden" name="id" value="{$ev->Id}">
         <div class="row">
         <span class="right">Activity</span>
-        <span name="activity" class="wide" contenteditable onchange="hxl_submit_form(event);" >{$ev->Activity}</span>
-         </div>
-         <div class="row">
-         <span class="right">Details</span>
-         <span name="details" class="wide" contenteditable onchange="hxl_submit_form(event);" >{$ev->Details}</span>
+        <input type="text" name="activity" class="wide" onchange="hxl_submit_form(event);"
+            value="{$ev->Activity}" placeholder="name for activity" >
+        </div>
+        <div class="row">
+        <span class="right">Details</span>
+        <input type="text" name="details" class="wide" onchange="hxl_submit_form(event);"
+            value="{$ev->Details}" placeholder="What will be done this time?" >
          </div>
           <div class="row">
          <span class="right">Started</span>
-         <span name="started" class="wide" contenteditable onchange="hxl_submit_form(event);" >{$ev->Started}</span>
+        <input type="text" name="started" class="wide" onchange="hxl_submit_form(event);"
+            value="{$ev->Started}" placeholder="start time" >
          </div>
-        </form>
+         <div class="row">
+         <span class="right">Remote IP</span><span>{$ev->IP}</span>
+         </div>
+         <div class="row">
+         <span>Lat: {$ev->Latitude}</span><span>Lon: {$ev->Longitude}</span>
+         </div>
+         <div class="row"><span></span><span><input type="button" name="delete" value="Delete" onclick="hxl_submit_form(event);" ></span></div> 
+         </form>
         </div>
         </div>
         EOM;
     }
+    /**
+     * @return void
+     */
+    private function showDefaultMain(): void
+    {
+        $lt='<!-- '.__FILE__.':'.__LINE__.' '.' -->';
+        echo <<< EOM
+        <div id="main" x-action="replace">
+        <h3>Nothing to show</h3>
+        $lt
+        </div>
+        EOM;
+    }
+    /**
+     * @return void
+     */
+    private function events2Edit(): void
+    {
+        global $status;
+        $lt='<!-- '.__FILE__.':'.__LINE__.' '.' -->';
+        $scriptURL = $_SERVER['SCRIPT_NAME'];
+        unset($status->lastShown);
+        echo <<< EOM
+        <div id="main" x-action="replace">
+        <h2>Recent events</h2>
+        <div id="recents">
+        $lt
+        </div>
+        <div id="sentinel" action="$scriptURL/more_events">more...</div>
+        </div>
+        <script>watch4moreEdits();</script>
+        EOM;
+    }
+    /**
+     * @return void
+     */
+    private function showMain(): void
+    {
+        global $status;
+        $status->mode ??= 'same';
+        match ($status->mode) {
+            'same' => $this->events2Register(),
+            'edit' => $this->events2Edit(),
+            'config' => $this->activities2Configure(),
+            default => $this->showDefaultMain(),
+        };
+    }
+    /**
+     * @return void
+     */
+    public static function More_Events(): void
+    {
+        global $status;
+        $scriptURL = $_SERVER['SCRIPT_NAME'];
+        $ls = $status->lastShown ?? ((new \DateTime())->format('y-m-d H:i:s'));
+        error_log(__FILE__ . ':' . __LINE__ . ' ' . __FUNCTION__ . ' more event...');
+        $db = Db\DbCtx::getCtx();
+        $m = 0;
+        $sql = <<< 'EOS'
+        SELECT * FROM `${prefix}Event` WHERE Started < :st ORDER BY Started DESC limit 5;
+        EOS;
+        $evs = $db->sqlAndRows($sql, 'Event', ['st' => $ls]);
+        echo <<< EOM
+        <div id="sentinel" x-action="remove">removing</div>
+        EOM;
+        $lt='<!-- '.__FILE__.':'.__LINE__.' '.' -->';
+        foreach($evs as $ev){
+            $status->lastShown = $ev->Started;
+            echo <<< EOM
+            <form x-action="append" x-id="recents" action="$scriptURL/show_event" onsubmit="return false;" onclick="hxl_submit_form(event);" >
+            $lt
+             <input type="hidden" name="id" value="{$ev->Id}">
+            <span onclick="hxl_submit_form(event);">{$ev->Started}</span><span>{$ev->Activity}</span><span>{$ev->Details}</span>
+            </form>
+           
+            EOM;
+            $m +=1;
+        }
+        echo <<<EOM
+        EOM;
+        if ($m >0) {
+            echo <<< EOM
+            <div id="sentinel" action="$scriptURL/more_events" x-action="append" x-id="main">more...</div>
+            <script>watch4moreEdits();</script>
+            EOM;
+        } else {
+            $lt='<!-- '.__FILE__.':'.__LINE__.' '.' -->';
+            echo <<< EOM
+            <div x-action="append" x-id="main">$lt all events shown</div>
+            EOM;
+        }
+    }
+    /**
+     * @return void
+     */
+    public static function Show_Event(): void
+    {
+        $db=Db\DbCtx::getCtx();
+        $id=$_POST["id"];
+        $evs=$db->findRows('Event',['Id'=>$id]);
+        $ev=$evs->current();
+        $p=new Page();
+        $p->editEvent($ev);
+    }
+    /**
+     * @return void
+     */
+    private function activities2Configure(): void
+    {
+        $scriptURL = $_SERVER['SCRIPT_NAME'];
+        $lt='<!-- '.__FILE__.':'.__LINE__.' '.' -->';
+        echo <<< EOM
+        <div id="main" x-action="replace">
+        $lt
+        <h2>Activities</h2>
+        <form action="$scriptURL/show_activity" onsubmit="return false;" onclick="hxl_submit_form(event);">
+        EOM;
+        $this->showAllActivities();
+        echo <<< EOM
+        </form>
+        </div>
+        EOM;
+
+    }
+    /**
+     * @return void
+     */
+    private function showAllActivities(): void
+    {
+        $db = Db\DbCtx::getCtx();
+        echo '<div class="boxed">';
+        $sql = <<< 'EOS'
+        WITH C_RN AS (
+        SELECT *, ROW_NUMBER() OVER (PARTITION BY Activity order by Started DESC) AS RN FROM ${prefix}Event
+        ) SELECT * from C_RN WHERE RN=1 ORDER By Started DESC
+        EOS;
+        foreach ($db->sqlAndRows($sql, 'Event') as $ev) {
+            echo <<< EOM
+            <div id="{$ev->Id}">{$ev->Activity}</div>
+            EOM;
+        }
+        echo '</div>';
+    }
+    /**
+     * @return void
+     */
+    public static function Show_Activity(): void
+    {
+    }
 }
+

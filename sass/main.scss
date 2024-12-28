@@ -50,7 +50,7 @@ div#topbox {
 div.boxed {
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem;
+    gap: 0.2rem;
 
     div {
         border: thin solid red;
@@ -58,7 +58,7 @@ div.boxed {
         margin: 0.2rem;
         padding: 0.5rem;
         min-width: 10rem;
-        min-height: 3rem;
+        min-height: 2rem;
         background-color: blanchedalmond;
     }
 }
@@ -81,21 +81,43 @@ div.table {
         text-align: right;
     }
     div.row {
-        border: thin solid green;
-        border-radius: 1rem;
         display: table-row;
         margin: 0.7rem;
         padding: 0.3rem;
-        span {
-            margin: 0.5rem;
+        input {
+            outline: none;
+            border: none;
+        }
+        * {
+            // margin: 0.5rem;
             padding: 0.2rem;
             display: table-cell;
-            border: thin solid red;
-            border-radius: 0.3rem;
         }
-        span.wide {
-            background-color: #e0e0e0;
-            min-width: 30rem;
+        .wide {
+            min-width: 20rem;
+        }
+        span:has(input[type="button"]){
+            text-align: right;
+        }
+        input[type="button"]{
+            border-radius: 0.3rem;
+            padding: 0.3rem;
+        }
+    }
+}
+
+div#recents {
+    $border: thin solid #e0e0e0;
+    // border: $border;
+    display: table;
+    padding: 0.3rem;
+    form {
+        display: table-row;
+        span {
+            padding: 0.3rem;
+            border-radius: 0.2rem;
+            display: table-cell;
+            border: $border;
         }
     }
 }

@@ -51,3 +51,13 @@ create table if not exists `${prefix}Event` (
     UNIQUE `u_started` (`Started`)
 );
 
+if not exists (select 1 from `${prefix}Event`) then
+    insert into `${prefix}Event`(`Activity`) values('first');
+end if;
+
+-- 2024-12-28 adding activity
+
+create table if not exists `${prefix}Activity` (
+    `Activity` VARCHAR(255) NOT NULL primary key,
+    `Parent` VARCHAR(255)
+);

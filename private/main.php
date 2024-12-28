@@ -42,7 +42,11 @@ try {
     match ($res) {
         '/home' => Code\Page::Show_Home(),
         '/change_mode' => Code\Page::Change_Mode(),
-        '/event' => Code\Event::HandleEvent(),
+        '/edit_event' => Code\EventHandler::Edit_Event(),
+        '/same_event' => Code\EventHandler::Same_Event(),
+        '/more_events' => Code\Page::More_Events(),
+        '/show_activity' => Code\Page::Show_Activity(),
+        '/show_event' => Code\Page::Show_Event(),
         default => error_log(__FILE__.':'.__LINE__. ' '. __FUNCTION__.' executing default action for '.$res ),
     };
 } catch (Exception $ex) {

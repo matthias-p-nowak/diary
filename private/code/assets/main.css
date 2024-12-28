@@ -44,7 +44,7 @@ div#topbox span:hover {
 div.boxed {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: 0.2rem;
 }
 div.boxed div {
   border: thin solid red;
@@ -52,7 +52,7 @@ div.boxed div {
   margin: 0.2rem;
   padding: 0.5rem;
   min-width: 10rem;
-  min-height: 3rem;
+  min-height: 2rem;
   background-color: blanchedalmond;
 }
 
@@ -75,22 +75,41 @@ div.table .right {
   text-align: right;
 }
 div.table div.row {
-  border: thin solid green;
-  border-radius: 1rem;
   display: table-row;
   margin: 0.7rem;
   padding: 0.3rem;
 }
-div.table div.row span {
-  margin: 0.5rem;
+div.table div.row input {
+  outline: none;
+  border: none;
+}
+div.table div.row * {
   padding: 0.2rem;
   display: table-cell;
-  border: thin solid red;
-  border-radius: 0.3rem;
 }
-div.table div.row span.wide {
-  background-color: #e0e0e0;
-  min-width: 30rem;
+div.table div.row .wide {
+  min-width: 20rem;
+}
+div.table div.row span:has(input[type=button]) {
+  text-align: right;
+}
+div.table div.row input[type=button] {
+  border-radius: 0.3rem;
+  padding: 0.3rem;
+}
+
+div#recents {
+  display: table;
+  padding: 0.3rem;
+}
+div#recents form {
+  display: table-row;
+}
+div#recents form span {
+  padding: 0.3rem;
+  border-radius: 0.2rem;
+  display: table-cell;
+  border: thin solid #e0e0e0;
 }
 
 /*# sourceMappingURL=main.css.map */
