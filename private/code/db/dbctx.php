@@ -94,7 +94,7 @@ class DbCtx
                     continue;
                 }
                 try {
-                    $this->pdo->exec($sqlParts);
+                    $stmt=$this->pdo->exec($sqlParts);
                 } catch (\PDOException $e) {
                     $msg = $e->getMessage();
                     error_log("got an exception $msg");

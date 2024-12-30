@@ -9,7 +9,7 @@ begin
     declare result int;
     set result = (select count(1) from information_schema.columns  
          where TABLE_SCHEMA = database() and
-         TABLE_NAME = tabName and COLUMN_NAME = colName 
+         TABLE_NAME = CONCAT('${prefix}',tabName) and COLUMN_NAME = colName 
         );
     return result; 
 end;
@@ -51,6 +51,8 @@ create table if not exists `${prefix}Event` (
     UNIQUE `u_started` (`Started`)
 );
 
+-- 2024-12-27 default value for activity of table is empty
+
 if not exists (select 1 from `${prefix}Event`) then
     insert into `${prefix}Event`(`Activity`) values('first');
 end if;
@@ -61,3 +63,28 @@ create table if not exists `${prefix}Activity` (
     `Activity` VARCHAR(255) NOT NULL primary key,
     `Parent` VARCHAR(255)
 );
+
+-- 2024-12-28 more things
+
+create table if not exists `${prefix}Accounted` (
+    `Activity` VARCHAR(255) NOT NULL,
+    `Day` INT NOT NULL,
+    `YearWeek` INT,
+    `WeekDay` INT,
+    `Worked` float default 0,
+    primary key (`Activity`,`day`)
+);
+
+-- 2024-12-29 adding columns
+if ${prefix}ColumnCount('Accounted','YearWeek') < 1 then
+    alter table `${prefix}Accounted` add column `YearWeek` int default 0;
+end if;
+
+if ${prefix}ColumnCount('Accounted','WeekDay') < 1 then
+    alter table `${prefix}Accounted` add column `WeekDay` int default 0;
+end if;
+
+if ${prefix}ColumnCount('Accounted','Worked') < 1 then
+    alter table `${prefix}Accounted` add column `Worked` float default 0;
+end if;
+

@@ -185,7 +185,7 @@ class Page
         echo <<< EOM
         <div id="main" x-action="replace">
         <h2>Recent events</h2>
-        <div id="recents">
+        <div id="recents" class="table" >
         $lt
         </div>
         <div id="sentinel" action="$scriptURL/more_events">more...</div>
@@ -229,12 +229,13 @@ class Page
         foreach($evs as $ev){
             $status->lastShown = $ev->Started;
             echo <<< EOM
-            <form x-action="append" x-id="recents" action="$scriptURL/show_event" onsubmit="return false;" onclick="hxl_submit_form(event);" >
+            <form  action="$scriptURL/show_event" class="row"
+                onsubmit="return false;" onclick="hxl_submit_form(event);" 
+                x-action="append" x-id="recents">
             $lt
-             <input type="hidden" name="id" value="{$ev->Id}">
+            <input type="hidden" name="id" value="{$ev->Id}"> 
             <span onclick="hxl_submit_form(event);">{$ev->Started}</span><span>{$ev->Activity}</span><span>{$ev->Details}</span>
             </form>
-           
             EOM;
             $m +=1;
         }
@@ -298,16 +299,44 @@ class Page
         EOS;
         foreach ($db->sqlAndRows($sql, 'Event') as $ev) {
             echo <<< EOM
-            <div id="{$ev->Id}">{$ev->Activity}</div>
+            <div id="{$ev->Id}" name="{$ev->Activity}">{$ev->Activity}</div>
             EOM;
         }
         echo '</div>';
     }
+
     /**
      * @return void
      */
     public static function Show_Activity(): void
     {
+        error_log(__FILE__.':'.__LINE__. ' '. __FUNCTION__);
+        $scriptURL = $_SERVER['SCRIPT_NAME'];
+        $activity=$_POST["name"];
+        $lt='<!-- '.__FILE__.':'.__LINE__.' '.' -->';
+        echo <<< EOM
+        <div id="main" x-action="replace">
+        $lt
+        <h2>Activity</h2>
+        <form action="$scriptURL/edit_activity" onsubmit="return false;" >
+        <input type="hidden" name="original" value="$activity">
+        <div class="table">
+        <div class="row">
+        <label>Activity</label>
+        <input type="text" name="activity" value="$activity" placeholder="name for activity">
+        </div>
+        <div class="row">
+        <span></span>
+        <label for="acc">
+        <input type="checkbox" name="acc" id="acc">
+        <span>create results</span>
+        </label>
+        </div>
+        
+        </div>
+        </form>
+        </div>
+        EOM;
     }
 }
 

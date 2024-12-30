@@ -65,7 +65,6 @@ div.boxed div {
 }
 
 div.table {
-  border: thin solid #d0d0d0;
   border-radius: 0.5rem;
   display: table;
   margin: 1rem;
@@ -74,42 +73,41 @@ div.table {
 div.table .right {
   text-align: right;
 }
-div.table div.row {
+div.table .row {
   display: table-row;
-  margin: 0.7rem;
+}
+div.table .row > * {
   padding: 0.3rem;
-}
-div.table div.row input {
-  outline: none;
-  border: none;
-}
-div.table div.row * {
-  padding: 0.2rem;
   display: table-cell;
+  border: thin solid #d0d0d0;
 }
-div.table div.row .wide {
+div.table .row .wide {
   min-width: 20rem;
 }
-div.table div.row span:has(input[type=button]) {
+div.table .row span:has(input[type=button]) {
   text-align: right;
 }
-div.table div.row input[type=button] {
+div.table .row input[type=button] {
   border-radius: 0.3rem;
   padding: 0.3rem;
 }
 
+/*
 div#recents {
-  display: table;
-  padding: 0.3rem;
+    $border: thin solid #e0e0e0;
+    // border: $border;
+    display: table;
+    padding: 0.3rem;
+    form {
+        display: table-row;
+        span {
+            padding: 0.3rem;
+            border-radius: 0.2rem;
+            display: table-cell;
+            border: $border;
+        }
+    }
 }
-div#recents form {
-  display: table-row;
-}
-div#recents form span {
-  padding: 0.3rem;
-  border-radius: 0.2rem;
-  display: table-cell;
-  border: thin solid #e0e0e0;
-}
+*/
 
 /*# sourceMappingURL=main.css.map */

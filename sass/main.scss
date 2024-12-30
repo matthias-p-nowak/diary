@@ -72,7 +72,8 @@ div.boxed {
 }
 
 div.table {
-    border: thin solid #d0d0d0;
+    $border: thin solid #d0d0d0;
+    // border: $border;
     border-radius: 0.5rem;
     display: table;
     margin: 1rem;
@@ -80,18 +81,19 @@ div.table {
     .right {
         text-align: right;
     }
-    div.row {
+    .row {
         display: table-row;
-        margin: 0.7rem;
-        padding: 0.3rem;
-        input {
-            outline: none;
-            border: none;
-        }
-        * {
+        // margin: 0.7rem;
+        // padding: 0.3rem;
+        // input {
+        //     outline: none;
+        //     // border: none;
+        // }
+        > * {
             // margin: 0.5rem;
-            padding: 0.2rem;
+            padding: 0.3rem;
             display: table-cell;
+            border: $border;
         }
         .wide {
             min-width: 20rem;
@@ -106,6 +108,7 @@ div.table {
     }
 }
 
+/*
 div#recents {
     $border: thin solid #e0e0e0;
     // border: $border;
@@ -121,3 +124,4 @@ div#recents {
         }
     }
 }
+*/
