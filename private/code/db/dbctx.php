@@ -46,7 +46,11 @@ class DbCtx
 {
     private static $instance;
     private $pdo;
-    private $prefix;
+    private string $prefix;
+
+    /**
+     * only getCtx gets to construct a new instance
+     */
     private function __construct()
     {
         global $config;
@@ -58,6 +62,10 @@ class DbCtx
         self::$instance = $this;
         $this->prefix = $dbCfg->prefix . '_' ?? '';
         // error_log(__FILE__ . ':' . __LINE__ . ' ' . __FUNCTION__ . ' db-pdo constructed');
+    }
+
+    public function getPrefix():string {
+        return $this->prefix;
     }
 
     /**
@@ -252,5 +260,20 @@ class DbCtx
         if (!$stmt->execute()) {
             error_log(__FILE__ . ':' . __LINE__ . ' deleting row failed ' . $sql . ' row=' . print_r($row, true));
         }
+    }
+    /**
+     * @return void
+     * @param array<int,mixed> $params the parameters to bind to the named
+     */
+    public function query(string $sql, array $params=[]): array 
+    {
+        $sql = str_replace('${prefix}', $this->prefix, $sql);
+        $stmt = $this->pdo->prepare($sql);
+        foreach($params as $key => $value){
+            $stmt->bindValue(':'.$key, $value);
+        }
+        $stmt->execute();
+        $res=$stmt->fetchAll();
+        return $res;
     }
 }

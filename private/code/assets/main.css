@@ -91,6 +91,9 @@ div.table .row input[type=button] {
   border-radius: 0.3rem;
   padding: 0.3rem;
 }
+div.table .row select {
+  width: 100%;
+}
 
 /*
 div#recents {

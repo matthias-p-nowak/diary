@@ -59,8 +59,9 @@ end if;
 
 -- 2024-12-28 adding activity
 
-create table if not exists `${prefix}Activity` (
-    `Activity` VARCHAR(255) NOT NULL primary key,
+CREATE TABLE IF NOT EXISTS `${prefix}Activity`(
+    `Activity` VARCHAR(255) NOT NULL PRIMARY KEY,
+    `Results` BOOLEAN NOT NULL DEFAULT FALSE,
     `Parent` VARCHAR(255)
 );
 
@@ -69,9 +70,12 @@ create table if not exists `${prefix}Activity` (
 create table if not exists `${prefix}Accounted` (
     `Activity` VARCHAR(255) NOT NULL,
     `Day` INT NOT NULL,
-    `YearWeek` INT,
-    `WeekDay` INT,
-    `Worked` float default 0,
+    `YearWeek` INT NOT NULL,
+    `WeekDay` INT NOT NULL,
+    `Worked` float NOT NULL default 0,
+    `Sofar` float NOT NULL default 0,
+    `Accounted` float NOT NULL default 0,
+    `DayAccount` float NOT NULL default 0,
     primary key (`Activity`,`day`)
 );
 
@@ -88,3 +92,21 @@ if ${prefix}ColumnCount('Accounted','Worked') < 1 then
     alter table `${prefix}Accounted` add column `Worked` float default 0;
 end if;
 
+
+if ${prefix}ColumnCount('Accounted','Accounted') < 1 then
+    alter table `${prefix}Accounted` add column `Accounted` float not null default 0;
+end if;
+
+if ${prefix}ColumnCount('Accounted','Accounted') < 1 then
+    alter table `${prefix}Accounted` add column `Accounted` float not null default 0;
+end if;
+
+if ${prefix}ColumnCount('Accounted','DayAccount') < 1 then
+    alter table `${prefix}Accounted` add column `DayAccount` float not null default 0;
+end if;
+
+-- 2024-12-30 getting on with configure
+
+if ${prefix}ColumnCount('Activity','Results') < 1 then
+    alter table `${prefix}Activity` add column `Results` boolean not null default false;
+end if;

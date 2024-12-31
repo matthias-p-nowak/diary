@@ -268,7 +268,7 @@ class Page
     /**
      * @return void
      */
-    private function activities2Configure(): void
+    public function activities2Configure(): void
     {
         $scriptURL = $_SERVER['SCRIPT_NAME'];
         $lt='<!-- '.__FILE__.':'.__LINE__.' '.' -->';
@@ -307,12 +307,23 @@ class Page
 
     /**
      * @return void
+     * @param string $activity
      */
-    public static function Show_Activity(): void
+    public static function Show_Activity(string $activity): void
     {
         error_log(__FILE__.':'.__LINE__. ' '. __FUNCTION__);
         $scriptURL = $_SERVER['SCRIPT_NAME'];
-        $activity=$_POST["name"];
+        // $activity=$_POST["name"];
+        $db= Db\DbCtx::getCtx();
+        $actRow=$db->findRows('Activity',["Activity" => $activity])->current();
+        if(is_null($actRow) ){
+            $actRow=new Db\Activity();
+            $actRow->Activity=$activity;
+            $db->storeRow($actRow);
+        }
+        $cbChecked= $actRow->Results ? 'checked': '';
+        $activities=$db->query('SELECT DISTINCT Activity FROM `${prefix}Event` order by Started desc');
+        $activities=array_map( fn($it) => $it[0], $activities);
         $lt='<!-- '.__FILE__.':'.__LINE__.' '.' -->';
         echo <<< EOM
         <div id="main" x-action="replace">
@@ -323,16 +334,36 @@ class Page
         <div class="table">
         <div class="row">
         <label>Activity</label>
-        <input type="text" name="activity" value="$activity" placeholder="name for activity">
+        <input type="text" name="activity" value="$activity" placeholder="name for activity" onchange="hxl_submit_form(event);" >
         </div>
         <div class="row">
-        <span></span>
-        <label for="acc">
-        <input type="checkbox" name="acc" id="acc">
+        <span>Time sheet</span>
+        <label for="results">
+        <input type="checkbox" name="results" id="results" $cbChecked onchange="hxl_submit_form(event);">
         <span>create results</span>
         </label>
         </div>
-        
+        <div class="row">
+        <label for="sel_parent">Label</label>
+        <span>
+        <select name="sel_parent" id="sel_parent" onchange="hxl_submit_form(event);" >
+        EOM;
+        foreach($activities as $act){
+            $selected= $act == $actRow->Parent ? ' selected ':'';
+            echo <<< EOM
+            <option value="$act" $selected>$act</option>
+            EOM;
+        }
+        $selected= is_null($actRow->Parent) ? 'selected' : '';
+        echo <<< EOM
+        <option value="" $selected>-</option>
+        </select>
+        </span>
+        </div>
+        <div class="row">
+            <span></span>
+            <span><input type="button" name="delete" value="Delete" onclick="hxl_submit_form(event);"></span>
+        </div>
         </div>
         </form>
         </div>

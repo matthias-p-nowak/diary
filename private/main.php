@@ -42,11 +42,12 @@ try {
     match ($res) {
         '/home' => Code\Page::Show_Home(),
         '/change_mode' => Code\Page::Change_Mode(),
+        '/edit_activity' => Code\ConfigHandler::Edit_Activity(),
         '/edit_event' => Code\EventHandler::Edit_Event(),
         '/same_event' => Code\EventHandler::Same_Event(),
         '/more_events' => Code\Page::More_Events(),
-        '/show_activity' => Code\Page::Show_Activity(),
-        '/show_event' => Code\Page::Show_Event(),
+        '/show_activity' => Code\Page::Show_Activity($_POST['name']),
+        '/show_event' => Code\Page::Show_Event($_POST['name']),
         default => error_log(__FILE__.':'.__LINE__. ' '. __FUNCTION__.' executing default action for '.$res ),
     };
 } catch (Exception $ex) {
