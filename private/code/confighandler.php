@@ -92,5 +92,4 @@ class ConfigHandler
         $p = new Page();
         $p->activities2Configure();
     }
-
 }

@@ -57,7 +57,7 @@ class Page
             'config' => $configStyle = 'style="background-color: bisque"',
             default => $sameStyle = 'style="background-color: lightgreen;"',
         };
-        $lt='<!-- '.__FILE__.':'.__LINE__.' '.' -->';
+        $lt = '<!-- ' . __FILE__ . ':' . __LINE__ . ' ' . ' -->';
         echo <<< EOM
         <div id="topbox" x-action="replace" >
         $lt
@@ -77,7 +77,7 @@ class Page
     private function events2Register(): void
     {
         $scriptURL = $_SERVER['SCRIPT_NAME'];
-        $lt='<!-- '.__FILE__.':'.__LINE__.' '.' -->';
+        $lt = '<!-- ' . __FILE__ . ':' . __LINE__ . ' ' . ' -->';
         echo <<< EOM
         <div id="main" x-action="replace">
         $lt
@@ -125,7 +125,7 @@ class Page
     public function editEvent(mixed $ev): void
     {
         $scriptURL = $_SERVER['SCRIPT_NAME'];
-        $lt='<!-- '.__FILE__.':'.__LINE__.' '.' -->';
+        $lt = '<!-- ' . __FILE__ . ':' . __LINE__ . ' ' . ' -->';
         echo <<< EOM
         <div id="main" x-action="replace">
         $lt
@@ -154,7 +154,7 @@ class Page
          <div class="row">
          <span>Lat: {$ev->Latitude}</span><span>Lon: {$ev->Longitude}</span>
          </div>
-         <div class="row"><span></span><span><input type="button" name="delete" value="Delete" onclick="hxl_submit_form(event);" ></span></div> 
+         <div class="row"><span></span><span><input type="button" name="delete" value="Delete" onclick="hxl_submit_form(event);" ></span></div>
          </form>
         </div>
         </div>
@@ -165,7 +165,7 @@ class Page
      */
     private function showDefaultMain(): void
     {
-        $lt='<!-- '.__FILE__.':'.__LINE__.' '.' -->';
+        $lt = '<!-- ' . __FILE__ . ':' . __LINE__ . ' ' . ' -->';
         echo <<< EOM
         <div id="main" x-action="replace">
         <h3>Nothing to show</h3>
@@ -179,7 +179,7 @@ class Page
     private function events2Edit(): void
     {
         global $status;
-        $lt='<!-- '.__FILE__.':'.__LINE__.' '.' -->';
+        $lt = '<!-- ' . __FILE__ . ':' . __LINE__ . ' ' . ' -->';
         $scriptURL = $_SERVER['SCRIPT_NAME'];
         unset($status->lastShown);
         echo <<< EOM
@@ -204,6 +204,7 @@ class Page
             'same' => $this->events2Register(),
             'edit' => $this->events2Edit(),
             'config' => $this->activities2Configure(),
+            'result' => $this->presentResults(),
             default => $this->showDefaultMain(),
         };
     }
@@ -225,29 +226,29 @@ class Page
         echo <<< EOM
         <div id="sentinel" x-action="remove">removing</div>
         EOM;
-        $lt='<!-- '.__FILE__.':'.__LINE__.' '.' -->';
-        foreach($evs as $ev){
+        $lt = '<!-- ' . __FILE__ . ':' . __LINE__ . ' ' . ' -->';
+        foreach ($evs as $ev) {
             $status->lastShown = $ev->Started;
             echo <<< EOM
             <form  action="$scriptURL/show_event" class="row"
-                onsubmit="return false;" onclick="hxl_submit_form(event);" 
+                onsubmit="return false;" onclick="hxl_submit_form(event);"
                 x-action="append" x-id="recents">
             $lt
-            <input type="hidden" name="id" value="{$ev->Id}"> 
+            <input type="hidden" name="id" value="{$ev->Id}">
             <span onclick="hxl_submit_form(event);">{$ev->Started}</span><span>{$ev->Activity}</span><span>{$ev->Details}</span>
             </form>
             EOM;
-            $m +=1;
+            $m += 1;
         }
         echo <<<EOM
         EOM;
-        if ($m >0) {
+        if ($m > 0) {
             echo <<< EOM
             <div id="sentinel" action="$scriptURL/more_events" x-action="append" x-id="main">more...</div>
             <script>watch4moreEdits();</script>
             EOM;
         } else {
-            $lt='<!-- '.__FILE__.':'.__LINE__.' '.' -->';
+            $lt = '<!-- ' . __FILE__ . ':' . __LINE__ . ' ' . ' -->';
             echo <<< EOM
             <div x-action="append" x-id="main">$lt all events shown</div>
             EOM;
@@ -258,11 +259,11 @@ class Page
      */
     public static function Show_Event(): void
     {
-        $db=Db\DbCtx::getCtx();
-        $id=$_POST["id"];
-        $evs=$db->findRows('Event',['Id'=>$id]);
-        $ev=$evs->current();
-        $p=new Page();
+        $db = Db\DbCtx::getCtx();
+        $id = $_POST["id"];
+        $evs = $db->findRows('Event', ['Id' => $id]);
+        $ev = $evs->current();
+        $p = new Page();
         $p->editEvent($ev);
     }
     /**
@@ -271,7 +272,7 @@ class Page
     public function activities2Configure(): void
     {
         $scriptURL = $_SERVER['SCRIPT_NAME'];
-        $lt='<!-- '.__FILE__.':'.__LINE__.' '.' -->';
+        $lt = '<!-- ' . __FILE__ . ':' . __LINE__ . ' ' . ' -->';
         echo <<< EOM
         <div id="main" x-action="replace">
         $lt
@@ -311,20 +312,20 @@ class Page
      */
     public static function Show_Activity(string $activity): void
     {
-        error_log(__FILE__.':'.__LINE__. ' '. __FUNCTION__);
+        error_log(__FILE__ . ':' . __LINE__ . ' ' . __FUNCTION__);
         $scriptURL = $_SERVER['SCRIPT_NAME'];
         // $activity=$_POST["name"];
-        $db= Db\DbCtx::getCtx();
-        $actRow=$db->findRows('Activity',["Activity" => $activity])->current();
-        if(is_null($actRow) ){
-            $actRow=new Db\Activity();
-            $actRow->Activity=$activity;
+        $db = Db\DbCtx::getCtx();
+        $actRow = $db->findRows('Activity', ["Activity" => $activity])->current();
+        if (is_null($actRow)) {
+            $actRow = new Db\Activity();
+            $actRow->Activity = $activity;
             $db->storeRow($actRow);
         }
-        $cbChecked= $actRow->Results ? 'checked': '';
-        $activities=$db->query('SELECT DISTINCT Activity FROM `${prefix}Event` order by Started desc');
-        $activities=array_map( fn($it) => $it[0], $activities);
-        $lt='<!-- '.__FILE__.':'.__LINE__.' '.' -->';
+        $cbChecked = $actRow->Results ? 'checked' : '';
+        $activities = $db->query('SELECT DISTINCT Activity FROM `${prefix}Event` order by Started desc');
+        $activities = array_map(fn($it) => $it[0], $activities);
+        $lt = '<!-- ' . __FILE__ . ':' . __LINE__ . ' ' . ' -->';
         echo <<< EOM
         <div id="main" x-action="replace">
         $lt
@@ -348,13 +349,13 @@ class Page
         <span>
         <select name="sel_parent" id="sel_parent" onchange="hxl_submit_form(event);" >
         EOM;
-        foreach($activities as $act){
-            $selected= $act == $actRow->Parent ? ' selected ':'';
+        foreach ($activities as $act) {
+            $selected = $act == $actRow->Parent ? ' selected ' : '';
             echo <<< EOM
             <option value="$act" $selected>$act</option>
             EOM;
         }
-        $selected= is_null($actRow->Parent) ? 'selected' : '';
+        $selected = is_null($actRow->Parent) ? 'selected' : '';
         echo <<< EOM
         <option value="" $selected>-</option>
         </select>
@@ -369,5 +370,22 @@ class Page
         </div>
         EOM;
     }
+    /**
+     * @return void
+     */
+    private function presentResults(): void
+    {
+        error_log(__FILE__ . ':' . __LINE__ . ' ' . __FUNCTION__ . ' calculating...');
+        $calc = new Calculator();
+        $calc->calculate();
+        $db = Db\DbCtx::getCtx();
+        $acc = $db->findRows('Accounted',[], 'ORDER BY `YearWeek`, `Activity`');
+        $lt = '<!-- ' . __FILE__ . ':' . __LINE__ . ' ' . ' -->';
+        echo <<< EOM
+        <div id="main" x-action="replace">
+        $lt
+        <h2>Results</h2>
+        </div>
+        EOM;
+    }
 }
-

@@ -72,7 +72,6 @@ create table if not exists `${prefix}Accounted` (
     `Day` INT NOT NULL,
     `YearWeek` INT NOT NULL,
     `WeekDay` INT NOT NULL,
-    `Worked` float NOT NULL default 0,
     `Sofar` float NOT NULL default 0,
     `Accounted` float NOT NULL default 0,
     `DayAccount` float NOT NULL default 0,
@@ -88,18 +87,10 @@ if ${prefix}ColumnCount('Accounted','WeekDay') < 1 then
     alter table `${prefix}Accounted` add column `WeekDay` int default 0;
 end if;
 
-if ${prefix}ColumnCount('Accounted','Worked') < 1 then
-    alter table `${prefix}Accounted` add column `Worked` float default 0;
-end if;
-
-
 if ${prefix}ColumnCount('Accounted','Accounted') < 1 then
     alter table `${prefix}Accounted` add column `Accounted` float not null default 0;
 end if;
 
-if ${prefix}ColumnCount('Accounted','Accounted') < 1 then
-    alter table `${prefix}Accounted` add column `Accounted` float not null default 0;
-end if;
 
 if ${prefix}ColumnCount('Accounted','DayAccount') < 1 then
     alter table `${prefix}Accounted` add column `DayAccount` float not null default 0;
@@ -110,3 +101,4 @@ end if;
 if ${prefix}ColumnCount('Activity','Results') < 1 then
     alter table `${prefix}Activity` add column `Results` boolean not null default false;
 end if;
+-- 2025-01-01 continue 
