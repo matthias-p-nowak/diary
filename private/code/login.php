@@ -15,10 +15,13 @@ class Login
     public function login(): bool
     {
         global $config;
+        error_log(__FILE__.':'.__LINE__. ' '. __FUNCTION__.' login()');
         if (isset($_SERVER['PHP_AUTH_USER'])) {
+            error_log(__FILE__.':'.__LINE__. ' '. __FUNCTION__.' got user');
             $user = $_SERVER['PHP_AUTH_USER'];
             $pw = $_SERVER['PHP_AUTH_PW'] ?? '';
             if (!in_array($user, $config->users)) {
+                error_log(__FILE__.':'.__LINE__. ' '. __FUNCTION__.' wrong user');
                 $this->requestLogin();
                 return false;
             }
@@ -27,6 +30,7 @@ class Login
             $pwds = iterator_to_array($pwdsIt);
             $now=new \DateTime('now');
             if (empty($pw)) {
+                error_log(__FILE__.':'.__LINE__. ' '. __FUNCTION__.' empty password');
                 // sending a password
                 // todo find out last email
                 $lt='1970-01-01 00:00:00';
@@ -94,7 +98,8 @@ class Login
 
         Greetings
         EOM;
-        $adhead= ['From' => $config->from ?? 'no from specified'];
+        $adhead= ['From' => ($config->from ?? 'no from specified')];
+        error_log(__FILE__.':'.__LINE__. ' '. __FUNCTION__.' sending password');
         $r = \mail($email, 'password provided', $message,$adhead);
         error_log(__FILE__ . ':' . __LINE__ . ' ' . __FUNCTION__ . "${r}");
         $hpw = password_hash($pw, PASSWORD_DEFAULT);
