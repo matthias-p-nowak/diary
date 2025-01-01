@@ -15,7 +15,7 @@ class Login
     public function login(): bool
     {
         global $config;
-        error_log(__FILE__.':'.__LINE__. ' '. __FUNCTION__.' login()'.print_r($_SERVER));
+        error_log(__FILE__.':'.__LINE__. ' '. __FUNCTION__.' login()'.print_r($_SERVER,true));
         if (isset($_SERVER['PHP_AUTH_USER'])) {
             error_log(__FILE__.':'.__LINE__. ' '. __FUNCTION__.' got user');
             $user = $_SERVER['PHP_AUTH_USER'];
