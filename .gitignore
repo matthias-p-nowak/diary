@@ -1,2 +1,4 @@
 /tmp/
 *.db
+private/main.ini
+public/diary.php

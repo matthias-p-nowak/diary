@@ -94,7 +94,8 @@ class Login
 
         Greetings
         EOM;
-        $r = \mail($email, 'password provided', $message);
+        $adhead= ['From' => $config->from ?? 'no from specified'];
+        $r = \mail($email, 'password provided', $message,$adhead);
         error_log(__FILE__ . ':' . __LINE__ . ' ' . __FUNCTION__ . "${r}");
         $hpw = password_hash($pw, PASSWORD_DEFAULT);
         if ($r) {
