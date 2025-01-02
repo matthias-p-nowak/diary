@@ -2,3 +2,4 @@
 *.db
 private/main.ini
 public/diary.php
+public/t

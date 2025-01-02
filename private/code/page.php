@@ -51,7 +51,7 @@ class Page
         $editStyle = '';
         $resultStyle = '';
         $configStyle = '';
-        match ($status->mode) {
+        match ($status->mode ?? '') {
             'edit' => $editStyle = 'style="background-color: yellow;"',
             'result' => $resultStyle = 'style="background-color: aqua;"',
             'config' => $configStyle = 'style="background-color: bisque"',
