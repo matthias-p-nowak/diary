@@ -45,7 +45,7 @@ create table if not exists `${prefix}Event` (
     `Details` VARCHAR(255),
     `Started` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
     `Ended` TIMESTAMP DEFAULT NULL,
-    `IP` VARCHAR(16),
+    `IP` VARCHAR(255),
     `Latitude` REAL,
     `Longitude` REAL,
     UNIQUE `u_started` (`Started`)
@@ -102,3 +102,10 @@ if ${prefix}ColumnCount('Activity','Results') < 1 then
     alter table `${prefix}Activity` add column `Results` boolean not null default false;
 end if;
 -- 2025-01-01 continue 
+
+-- 2025-01-03 adding bigger IP
+if ${prefix}ColumnCount('Event','IP') < 1 then
+    alter table `${prefix}Event` add column `IP` VARCHAR(255);
+end if;
+
+-- 2025-01-03 and ...
