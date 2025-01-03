@@ -51,8 +51,8 @@ div.boxed div {
   border-radius: 0.5rem;
   margin: 0.2rem;
   padding: 0.5rem;
-  min-width: 10rem;
-  min-height: 2rem;
+  min-width: 8rem;
+  min-height: 1.5rem;
   background-color: blanchedalmond;
 }
 
@@ -94,23 +94,5 @@ div.table .row input[type=button] {
 div.table .row select {
   width: 100%;
 }
-
-/*
-div#recents {
-    $border: thin solid #e0e0e0;
-    // border: $border;
-    display: table;
-    padding: 0.3rem;
-    form {
-        display: table-row;
-        span {
-            padding: 0.3rem;
-            border-radius: 0.2rem;
-            display: table-cell;
-            border: $border;
-        }
-    }
-}
-*/
 
 /*# sourceMappingURL=main.css.map */
