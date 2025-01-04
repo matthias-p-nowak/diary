@@ -377,6 +377,7 @@ class Page
     {
         error_log(__FILE__ . ':' . __LINE__ . ' ' . __FUNCTION__ . ' calculating...');
         $calc = new Calculator();
+        $calc->getHierarchy();
         $calc->calculate();
         $db = Db\DbCtx::getCtx();
         $acc = $db->findRows('Accounted',[], 'ORDER BY `YearWeek`, `Activity`');
