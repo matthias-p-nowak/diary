@@ -110,3 +110,24 @@ div.table {
         }
     }
 }
+div#hierarchy {
+    // background-color: antiquewhite;
+    // border: thin solid #d0d0d0;
+    // border-radius: 1rem;
+    padding: 1rem;
+    div {
+        margin-left: 1rem;
+    }
+    div:last-child::before {
+        content: '└ ';
+        color: black;
+    }
+    div:not(:last-child)::before {
+        content: '├ ';
+        color: black;
+    }
+    > div:not(.dummy)::before {
+        content: '• ';
+        color: black;
+    }
+}

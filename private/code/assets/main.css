@@ -1,3 +1,4 @@
+@charset "UTF-8";
 html {
   font-size: 4mm;
 }
@@ -93,6 +94,25 @@ div.table .row input[type=button] {
 }
 div.table .row select {
   width: 100%;
+}
+
+div#hierarchy {
+  padding: 1rem;
+}
+div#hierarchy div {
+  margin-left: 1rem;
+}
+div#hierarchy div:last-child::before {
+  content: "└ ";
+  color: black;
+}
+div#hierarchy div:not(:last-child)::before {
+  content: "├ ";
+  color: black;
+}
+div#hierarchy > div:not(.dummy)::before {
+  content: "• ";
+  color: black;
 }
 
 /*# sourceMappingURL=main.css.map */

@@ -7,10 +7,10 @@ class Calculator
     /**
      * @var array<<missing>,mixed>
      */
-    private array $activities = [];
-    private array $children = [];
+    public array $activities = [];
+    public array $children = [];
 
-    private array $levels = [];
+    public array $levels = [];
 
     /**
      * @return void
@@ -63,31 +63,62 @@ class Calculator
     /**
      * @return void
      */
-    public function getHierarchy(): void
+    public function calcHierarchy(): void
     {
         $db = Db\DbCtx::getCtx();
         $activities = 0;
+        $this->levels = [];
         foreach ($db->findRows('Activity') as $row) {
             $activities += 1;
+            $this->levels[$row->Activity] = 0;
             $this->activities[$row->Activity] = $row;
             if (!is_null($row->Parent)) {
                 $this->children[$row->Parent][$row->Activity] = $row;
+                $this->levels[$row->Parent] = 0;
             }
         }
-        $this->levels = [];
+        AgainFromScratch:
+        foreach ($this->activities as $act => $row) {
+            $this->levels[$act] = 0;
+        }
         do {
             $again = false;
             foreach ($this->children as $parent => $crow) {
                 foreach ($crow as $child => $row) {
                     $cl = $this->levels[$child] ?? 0;
                     $pl = $this->levels[$parent] ?? 0;
-                    if ($cl < $pl + 1) {
-                        $this->levels[$child] = $pl + 1;
-                        $again = true;
+                    if ($pl > $activities) {
+                        $db->deleteRow($row);
+                        unset($this->children[$parent][$child]);
+                        goto AgainFromScratch;
+                    } else {
+                        if ($cl < $pl + 1) {
+                            $this->levels[$child] = $pl + 1;
+                            $again = true;
+                        }
                     }
                 }
             }
         } while ($again);
     }
-
+    /**
+     * @return void
+     * @param mixed $activity
+     */
+    public function showTree($activity): void
+    {
+        $line=$activity;
+        if(isset($this->activities[$activity])){
+            if($this->activities[$activity]->Results){
+                $line='<b>'.$line.'</b>';
+            }
+        }else{
+            $line='<em>'.$line.'</em>';
+        }
+        echo '<div>'.$line;
+        foreach($this->children[$activity] as $child => $row){
+            $this->showTree($child);
+        }
+        echo '</div>';
+    }
 }

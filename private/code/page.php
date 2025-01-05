@@ -277,6 +277,18 @@ class Page
         <div id="main" x-action="replace">
         $lt
         <h2>Activities</h2>
+        <div id="hierarchy">
+        EOM;
+        $calc = new Calculator();
+        $calc->calcHierarchy();
+        foreach ($calc->levels as $activity => $level) {
+            if ($level > 0) {
+                continue;
+            }
+            $calc->showTree($activity);
+        }
+        echo <<< EOM
+        </div>
         <form action="$scriptURL/show_activity" onsubmit="return false;" onclick="hxl_submit_form(event);">
         EOM;
         $this->showAllActivities();
@@ -377,10 +389,10 @@ class Page
     {
         error_log(__FILE__ . ':' . __LINE__ . ' ' . __FUNCTION__ . ' calculating...');
         $calc = new Calculator();
-        $calc->getHierarchy();
+        $calc->calcHierarchy();
         $calc->calculate();
         $db = Db\DbCtx::getCtx();
-        $acc = $db->findRows('Accounted',[], 'ORDER BY `YearWeek`, `Activity`');
+        $acc = $db->findRows('Accounted', [], 'ORDER BY `YearWeek`, `Activity`');
         $lt = '<!-- ' . __FILE__ . ':' . __LINE__ . ' ' . ' -->';
         echo <<< EOM
         <div id="main" x-action="replace">
