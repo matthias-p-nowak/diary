@@ -129,7 +129,7 @@ class Calculator
             $line='<em>'.$line.'</em>';
         }
         echo '<div>'.$line;
-        foreach($this->children[$activity] as $child => $row){
+        foreach(($this->children[$activity] ?? []) as $child => $row){
             $this->showTree($child);
         }
         echo '</div>';
