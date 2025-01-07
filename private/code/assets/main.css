@@ -1,4 +1,3 @@
-@charset "UTF-8";
 html {
   font-size: 4mm;
 }
@@ -98,21 +97,27 @@ div.table .row select {
 
 div#hierarchy {
   padding: 1rem;
+  width: max-content;
 }
 div#hierarchy div {
-  margin-left: 1rem;
+  margin-left: 0.5rem;
+  border: thin solid #a0a0a0;
+  border-radius: 0.3rem;
+  margin-top: 0.2rem;
+  padding: 0.5rem;
 }
-div#hierarchy div:last-child::before {
-  content: "└ ";
-  color: black;
+
+table {
+  border: thin solid #d0d0d0;
+  border-collapse: collapse;
 }
-div#hierarchy div:not(:last-child)::before {
-  content: "├ ";
-  color: black;
+table .right {
+  text-align: right;
 }
-div#hierarchy > div:not(.dummy)::before {
-  content: "• ";
-  color: black;
+table th, table td {
+  border: thin solid #a0a0a0;
+  border-collapse: collapse;
+  padding: 0.5rem;
 }
 
 /*# sourceMappingURL=main.css.map */

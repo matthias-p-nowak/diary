@@ -387,18 +387,84 @@ class Page
      */
     private function presentResults(): void
     {
+        global $status;
         error_log(__FILE__ . ':' . __LINE__ . ' ' . __FUNCTION__ . ' calculating...');
         $calc = new Calculator();
         $calc->calcHierarchy();
         $calc->calculate();
-        $db = Db\DbCtx::getCtx();
-        $acc = $db->findRows('Accounted', [], 'ORDER BY `YearWeek`, `Activity`');
-        $lt = '<!-- ' . __FILE__ . ':' . __LINE__ . ' ' . ' -->';
         echo <<< EOM
         <div id="main" x-action="replace">
-        $lt
         <h2>Results</h2>
+        EOM;
+        $status->resultYearWeek=999901;
+        $this->showMoreResults();
+        echo <<< EOM
         </div>
+        EOM;
+    }
+    /**
+     * @return void
+     */
+    private function showMoreResults(): void
+    {
+        global $status;
+        $db = Db\DbCtx::getCtx();
+        $sql = 'SELECT * FROM `${prefix}Accounted` WHERE `YearWeek` < :yw ORDER by `YearWeek` DESC, `Activity` ';
+        $res=$db->sqlAndRows($sql, 'Accounted',['yw' => $status->resultYearWeek]);
+        $weeks=0;
+        $weekArr=[];
+        foreach($res as $row){
+            if($row->YearWeek != $status->resultYearWeek){
+                if(count($weekArr)>0){
+                    $this->printWeek($weekArr);
+                    $weekArr=[];
+                }
+                $weeks+=1;
+                if($weeks > 4){
+                    break;
+                }
+                $yw=$row->YearWeek;
+                $status->resultYearWeek=$yw;
+                $year=intdiv($yw,100);
+                $week=$yw % 100;
+                printf('<h3> Year %4d, week %02d</h3>',$year,$week); 
+            }
+            $weekArr[$row->Activity][$row->WeekDay]=$row->DayAccount;
+        }
+        if(count($weekArr)>0){
+            $this->printWeek($weekArr);
+            $week=[];
+        }
+    }
+
+    /**
+     * @param array $week
+     * @return void
+     */
+    private function printWeek(array $week): void
+    {
+        echo <<< EOM
+        <table><thead><tr>
+        <th>Activity</th>
+        <th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th><th>Sun</th>
+        </tr></thead><tbody>
+        EOM;
+        foreach($week as $act => $acc){
+            $man=$acc[0] ?? '';
+            $tue=$acc[1] ?? '';
+            $wed=$acc[2] ?? '';
+            $thu=$acc[3] ?? '';
+            $fri=$acc[4] ?? '';
+            $sat=$acc[5] ?? '';
+            $sun=$acc[6] ?? '';
+            echo <<< EOM
+            <tr><td class="right">$act</td>
+            <td>$man</td><td>$tue</td><td>$wed</td><td>$thu</td><td>$fri</td><td>$sat</td><td>$sun</td>
+            </tr>
+            EOM;
+        }
+        echo <<< EOM
+        </tbody></table>
         EOM;
     }
 }
