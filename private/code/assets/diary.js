@@ -45,6 +45,7 @@ async function register_event(event) {
 }
 
 function more_callback(entries, observer){
+    console.log('calling for more');
     let entry=entries[0];
     if(! entry.isIntersecting)
         return;
@@ -61,5 +62,7 @@ function watch4more(){
     if(sentinel != null){
         const observer = new IntersectionObserver(more_callback);
         observer.observe(sentinel);
+    }else{
+        console.log('no sentinel found');
     }
 }

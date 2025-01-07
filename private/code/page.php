@@ -392,14 +392,14 @@ class Page
         $calc = new Calculator();
         $calc->calcHierarchy();
         $calc->calculate();
+        $status->resultYearWeek = 999901;
+        $scriptURL = $_SERVER['SCRIPT_NAME'];
         echo <<< EOM
         <div id="main" x-action="replace">
         <h2>Results</h2>
-        EOM;
-        $status->resultYearWeek = 999901;
-        $this->showMoreResults();
-        echo <<< EOM
+        <div id="sentinel" action="$scriptURL/more_results">first and more...</div>
         </div>
+        <script>watch4more();</script>
         EOM;
     }
     /**
@@ -421,7 +421,7 @@ class Page
                     $weekArr = [];
                 }
                 $weeks += 1;
-                if ($weeks > 1) {
+                if ($weeks > 4) {
                     break;
                 }
                 $yw = $row->YearWeek;
