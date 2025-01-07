@@ -46,6 +46,7 @@ try {
         '/edit_event' => Code\EventHandler::Edit_Event(),
         '/same_event' => Code\EventHandler::Same_Event(),
         '/more_events' => Code\Page::More_Events(),
+        '/more_results' => Code\Page::More_Results(),
         '/show_activity' => Code\Page::Show_Activity($_POST['name']),
         '/show_event' => Code\Page::Show_Event($_POST['name']),
         default => error_log(__FILE__.':'.__LINE__. ' '. __FUNCTION__.' executing default action for '.$res ),

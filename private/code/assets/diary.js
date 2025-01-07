@@ -44,7 +44,7 @@ async function register_event(event) {
     hxl_send_form(action, formData, event.target);
 }
 
-function edit_callback(entries, observer){
+function more_callback(entries, observer){
     let entry=entries[0];
     if(! entry.isIntersecting)
         return;
@@ -56,11 +56,10 @@ function edit_callback(entries, observer){
     hxl_send_form(action,formData,target);
 }
 
-function watch4moreEdits(){
+function watch4more(){
     const sentinel= document.getElementById('sentinel');
     if(sentinel != null){
-        const observer = new IntersectionObserver(edit_callback);
+        const observer = new IntersectionObserver(more_callback);
         observer.observe(sentinel);
     }
-
 }
