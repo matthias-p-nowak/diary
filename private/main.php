@@ -44,7 +44,7 @@ try {
         '/change_mode' => Code\Page::Change_Mode(),
         '/edit_activity' => Code\ConfigHandler::Edit_Activity(),
         '/edit_event' => Code\EventHandler::Edit_Event(),
-        '/same_event' => Code\EventHandler::Same_Event(),
+        '/event_again' => Code\EventHandler::event_again(),
         '/more_events' => Code\Page::More_Events(),
         '/more_results' => Code\Page::More_Results(),
         '/show_activity' => Code\Page::Show_Activity($_POST['name']),

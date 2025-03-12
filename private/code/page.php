@@ -62,7 +62,7 @@ class Page
         <div id="topbox" x-action="replace" >
         $lt
         <form action="$scriptURL/change_mode" onsubmit="return false;" onclick="hxl_submit_form(event);">
-        <span name="same" $sameStyle >Same</span>
+        <span name="same" $sameStyle >Again</span>
         <span name="edit" $editStyle >Edit</span>
         <span name="result" $resultStyle >Results</span>
         <span name="config" $configStyle >Configure</span>
@@ -82,7 +82,7 @@ class Page
         <div id="main" x-action="replace">
         $lt
         <h2>Past events</h2>
-        <form action="$scriptURL/same_event" onsubmit="return false;" onclick="register_event(event);">
+        <form action="$scriptURL/event_again" onsubmit="return false;" onclick="register_event(event);">
         EOM;
         $this->showAllActivities();
         echo <<< EOM
@@ -152,7 +152,8 @@ class Page
          <span class="right">Remote IP</span><span>{$ev->IP}</span>
          </div>
          <div class="row">
-         <span>Lat: {$ev->Latitude}</span><span>Lon: {$ev->Longitude}</span>
+         <span>Position:</span>
+         <span>Lat: {$ev->Latitude}<br >Lon: {$ev->Longitude}</span>
          </div>
          <div class="row"><span></span><span><input type="button" name="delete" value="Delete" onclick="hxl_submit_form(event);" ></span></div>
          </form>
@@ -402,6 +403,7 @@ class Page
         <script>watch4more();</script>
         EOM;
     }
+    
     /**
      * @return void
      */

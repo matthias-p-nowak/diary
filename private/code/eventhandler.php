@@ -6,7 +6,7 @@ class EventHandler
     /**
      * @return void
      */
-    public static function Same_Event(): void
+    public static function event_again(): void
     {
         global $status;
         error_log(__FILE__ . ':' . __LINE__ . ' ' . __FUNCTION__ . print_r($_POST, true));

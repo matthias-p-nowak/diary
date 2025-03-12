@@ -261,6 +261,7 @@ class DbCtx
             error_log(__FILE__ . ':' . __LINE__ . ' deleting row failed ' . $sql . ' row=' . print_r($row, true));
         }
     }
+    
     /**
      * @return void
      * @param array<int,mixed> $params the parameters to bind to the named
@@ -276,4 +277,6 @@ class DbCtx
         $res=$stmt->fetchAll();
         return $res;
     }
+
+    
 }
